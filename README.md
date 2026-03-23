@@ -55,7 +55,7 @@ This app write by Cloude.ai.
 
 ### 로컬에서 사용
 ```bash
-git clone https://github.com/[username]/[repo-name].git
+git clone https://github.com/deulssak/AWS_CLF_BlankTest.git
 # clf_blank.html 또는 clf_quiz.html을 브라우저로 열기
 ```
 
