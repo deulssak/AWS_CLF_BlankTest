@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AWS CLF 빈칸채우기</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;}
+.topbar{background:#232f3e;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar h1{font-size:16px;font-weight:600;letter-spacing:-0.3px;}
+.topbar .ver{font-size:11px;color:#ff9900;font-weight:600;}
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;background:#fff;border-bottom:1px solid #e8e8e0;}
+.scard{text-align:center;padding:8px 4px;border-radius:8px;background:#f8f8f4;}
+.scard .n{font-size:20px;font-weight:700;}
+.scard .l{font-size:10px;color:#888;margin-top:1px;}
+.n.c{color:#1a8a5e;} .n.w{color:#d93025;} .n.r{color:#f29900;}
+.domain-row{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;background:#fff;border-bottom:1px solid #e8e8e0;}
+.domain-row::-webkit-scrollbar{display:none;}
+.dbtn{padding:7px 14px;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-size:12px;white-space:nowrap;cursor:pointer;font-weight:500;color:#555;}
+.dbtn.active{background:#232f3e;color:#fff;border-color:#232f3e;}
+.prog-wrap{padding:10px 16px;background:#fff;}
+.prog-bar{height:4px;background:#e8e8e0;border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:#1a8a5e;border-radius:99px;transition:width .3s;}
+.prog-txt{font-size:11px;color:#888;margin-top:4px;text-align:right;}
+.q-wrap{padding:12px 16px 120px;}
+.q-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e8e8e0;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.dtag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.t3{background:#e8f4fd;color:#1565c0;} .t2{background:#fff3e0;color:#e65100;} .t1{background:#e8f5e9;color:#2e7d32;}
+.qnum{font-size:11px;color:#aaa;margin-bottom:6px;}
+.qtext{font-size:15px;line-height:1.7;color:#1a1a1a;margin-bottom:14px;}
+.blank-mark{display:inline-block;border-bottom:2px solid #232f3e;min-width:70px;padding:0 4px;}
+.ans-input{width:100%;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;background:#fafaf8;color:#1a1a1a;outline:none;-webkit-appearance:none;}
+.ans-input:focus{border-color:#232f3e;background:#fff;}
+.btn-row{display:flex;gap:8px;margin-top:10px;}
+.btn{flex:1;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-check{background:#232f3e;color:#fff;}
+.btn-skip{background:#f0f0ec;color:#666;}
+.btn-next{background:#1a8a5e;color:#fff;}
+.fb{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.6;}
+.fb.ok{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20;}
+.fb.ng{background:#ffebee;border:1px solid #ef9a9a;color:#b71c1c;}
+.fb .kw{font-weight:700;}
+.hint{font-size:12px;color:#888;margin-top:8px;}
+.nav-row{position:fixed;bottom:0;left:0;right:0;display:flex;gap:10px;padding:12px 16px 20px;background:#fff;border-top:1px solid #e8e8e0;z-index:50;}
+.nav-btn{flex:1;padding:13px;border-radius:10px;border:1.5px solid #ddd;background:#fff;font-size:14px;font-weight:600;color:#333;cursor:pointer;}
+.nav-btn:disabled{opacity:.3;}
+.nav-btn.active-nav{background:#ff9900;color:#fff;border-color:#ff9900;}
+.empty{text-align:center;padding:60px 20px;color:#aaa;font-size:15px;}
+.mode-row{display:flex;gap:6px;padding:0 16px 10px;background:#fff;}
+.mbtn{padding:6px 14px;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-size:12px;color:#555;cursor:pointer;font-weight:500;}
+.mbtn.active{background:#ff9900;color:#fff;border-color:#ff9900;}
+.round-badge{font-size:11px;color:#888;text-align:center;padding:6px 0 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>AWS CLF 빈칸채우기</h1>
+  <span class="ver">CLF-C02</span>
+</div>
+
+<div class="score-row">
+  <div class="scard"><div class="n c" id="sc-c">0</div><div class="l">정답</div></div>
+  <div class="scard"><div class="n w" id="sc-w">0</div><div class="l">오답</div></div>
+  <div class="scard"><div class="n" id="sc-rem">0</div><div class="l">남음</div></div>
+  <div class="scard"><div class="n r" id="sc-rate">0%</div><div class="l">정답률</div></div>
+</div>
+
+<div class="domain-row">
+  <button class="dbtn active" onclick="setDomain('all')">전체</button>
+  <button class="dbtn" onclick="setDomain('3')">도메인3</button>
+  <button class="dbtn" onclick="setDomain('2')">도메인2</button>
+  <button class="dbtn" onclick="setDomain('1')">도메인1</button>
+  <button class="dbtn" onclick="setDomain('wrong')">오답만</button>
+</div>
+
+<div style="background:#fff;padding:10px 16px 4px;">
+  <div class="mode-row">
+    <button class="mbtn active" onclick="setMode('fill')">빈칸채우기</button>
+    <button class="mbtn" onclick="setMode('review')">정답 복습</button>
+  </div>
+  <div class="round-badge" id="round-badge">1회독 중</div>
+</div>
+
+<div class="prog-wrap" style="background:#fff;padding:8px 16px 12px;">
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="prog-txt" id="prog-txt">0 / 0</div>
+</div>
+
+<div class="q-wrap" id="q-area"></div>
+
+<div class="nav-row">
+  <button class="nav-btn" id="btn-prev" onclick="movePrev()" disabled>이전</button>
+  <button class="nav-btn active-nav" onclick="resetQuiz()">처음부터</button>
+  <button class="nav-btn" id="btn-next" onclick="moveNext()" disabled>다음</button>
+</div>
+
+<script>
+const Q=[
+  {d:'3',q:'서버 없이 코드만 업로드하면 이벤트 발생 시 자동 실행되는 서비스는 AWS _____이다.',a:'Lambda',h:'서버리스 실행',alts:[]},
+  {d:'3',q:'AWS Lambda의 핵심 특징은 서버를 직접 관리하지 않는 _____ 방식이다.',a:'서버리스',h:'serverless',alts:['serverless']},
+  {d:'3',q:'트래픽 급증 시 자동으로 EC2 인스턴스 수를 늘리고 줄이는 기능은 Auto _____이다.',a:'Scaling',h:'자동 확장',alts:['스케일링']},
+  {d:'3',q:'Auto Scaling이 제공하는 핵심 이점은 수요에 따라 유연하게 늘고 주는 _____성이다.',a:'탄력',h:'elasticity',alts:['elasticity','elastic']},
+  {d:'3',q:'여러 EC2에 트래픽을 고르게 분산시키는 서비스는 ELB, 즉 _____ 로드 밸런서이다.',a:'Elastic',h:'탄력적 부하분산',alts:['탄력적']},
+  {d:'3',q:'컴퓨팅 성능이 가장 중요한 워크로드에 적합한 EC2 인스턴스 유형은 _____ 최적화이다.',a:'컴퓨팅',h:'C 시리즈',alts:['compute']},
+  {d:'3',q:'대규모 인메모리 처리에 적합한 EC2 인스턴스 유형은 _____ 최적화이다.',a:'메모리',h:'R 시리즈',alts:['memory']},
+  {d:'3',q:'Docker 컨테이너를 AWS 관리형으로 실행하는 서비스는 Amazon _____이다.',a:'ECS',h:'Elastic Container Service',alts:['Elastic Container Service']},
+  {d:'3',q:'Kubernetes 기반 컨테이너 오케스트레이션 AWS 서비스는 Amazon _____이다.',a:'EKS',h:'Elastic Kubernetes Service',alts:['Elastic Kubernetes Service']},
+  {d:'3',q:'EC2 없이 컨테이너를 서버리스로 실행하는 서비스는 AWS _____이다.',a:'Fargate',h:'서버리스 컨테이너',alts:[]},
+  {d:'3',q:'이미지·동영상 등 비정형 파일을 무제한 저장하는 서비스는 Amazon _____이다.',a:'S3',h:'Simple Storage Service',alts:['Simple Storage Service']},
+  {d:'3',q:'S3 스토리지 등급 중 자주 접근하는 데이터에 적합한 기본 등급은 S3 _____이다.',a:'Standard',h:'표준',alts:['스탠다드']},
+  {d:'3',q:'S3에서 자주 접근하지 않지만 빠른 접근이 필요한 등급은 S3 Standard-_____이다.',a:'IA',h:'Infrequent Access',alts:['Infrequent Access','infrequentaccess']},
+  {d:'3',q:'장기 보관 아카이브 데이터에 가장 저렴한 S3 등급은 S3 _____이다.',a:'Glacier',h:'빙하처럼 저렴하고 느림',alts:['글레이셔']},
+  {d:'3',q:'EC2에 연결하는 하드디스크 역할의 블록 스토리지는 Amazon _____이다.',a:'EBS',h:'Elastic Block Store',alts:['Elastic Block Store']},
+  {d:'3',q:'여러 EC2가 동시에 접근 가능한 공유 파일 시스템은 Amazon _____이다.',a:'EFS',h:'Elastic File System',alts:['Elastic File System']},
+  {d:'3',q:'S3는 _____ 스토리지, EBS는 _____ 스토리지, EFS는 _____ 스토리지이다.',a:'객체 / 블록 / 파일',h:'세 가지 스토리지 유형',alts:['object / block / file','object/block/file']},
+  {d:'3',q:'여러 AWS 서비스 백업을 중앙에서 통합 관리하는 서비스는 AWS _____이다.',a:'Backup',h:'백업 통합 관리',alts:['백업']},
+  {d:'3',q:'MySQL, PostgreSQL 등 관계형 DB를 관리형으로 운영하는 서비스는 Amazon _____이다.',a:'RDS',h:'Relational Database Service',alts:['Relational Database Service']},
+  {d:'3',q:'AWS 자체 개발 관계형 DB로 RDS보다 빠른 성능을 제공하는 서비스는 Amazon _____이다.',a:'Aurora',h:'AWS 전용 RDBMS',alts:['오로라']},
+  {d:'3',q:'키-값 구조의 NoSQL 데이터베이스로 대규모 확장에 적합한 서비스는 Amazon _____이다.',a:'DynamoDB',h:'NoSQL',alts:['다이나모DB','다이나모디비']},
+  {d:'3',q:'반복 쿼리 결과를 메모리에 저장해 DB 부하를 줄이는 캐시 서비스는 Amazon _____이다.',a:'ElastiCache',h:'Redis/Memcached',alts:['엘라스티캐시','Elasticache']},
+  {d:'3',q:'기존 온프레미스 DB를 AWS로 옮길 때 사용하는 마이그레이션 서비스는 AWS _____이다.',a:'DMS',h:'Database Migration Service',alts:['Database Migration Service']},
+  {d:'3',q:'이기종 DB 간 스키마를 변환할 때 사용하는 도구는 AWS _____이다.',a:'SCT',h:'Schema Conversion Tool',alts:['Schema Conversion Tool']},
+  {d:'3',q:'AWS에서 나만의 가상 네트워크를 구성하는 서비스는 Amazon _____이다.',a:'VPC',h:'Virtual Private Cloud',alts:['Virtual Private Cloud']},
+  {d:'3',q:'EC2 인스턴스 레벨에서 적용되는 가상 방화벽은 _____이다.',a:'보안 그룹',h:'Security Group',alts:['Security Group','securitygroup']},
+  {d:'3',q:'서브넷 레벨에서 적용되는 방화벽은 네트워크 _____이다.',a:'ACL',h:'Access Control List',alts:['Access Control List','액세스 컨트롤 리스트']},
+  {d:'3',q:'보안 그룹은 _____ 방식으로 동작해 응답 트래픽을 자동 허용한다.',a:'Stateful',h:'상태 저장',alts:['스테이트풀','상태저장']},
+  {d:'3',q:'네트워크 ACL은 _____ 방식으로 인바운드·아웃바운드를 각각 명시해야 한다.',a:'Stateless',h:'상태 비저장',alts:['스테이트리스','상태비저장']},
+  {d:'3',q:'도메인 이름을 IP 주소로 변환하는 AWS DNS 서비스는 Amazon Route _____이다.',a:'53',h:'DNS 서비스',alts:[]},
+  {d:'3',q:'온프레미스와 AWS를 인터넷 암호화 터널로 연결하는 서비스는 AWS _____이다.',a:'VPN',h:'가상 사설 네트워크',alts:['Virtual Private Network']},
+  {d:'3',q:'온프레미스와 AWS를 전용선으로 연결하는 서비스는 AWS Direct _____이다.',a:'Connect',h:'전용선 연결',alts:['커넥트']},
+  {d:'3',q:'ML 모델을 개발·훈련·배포까지 통합 지원하는 서비스는 Amazon _____이다.',a:'SageMaker',h:'ML 플랫폼',alts:['세이지메이커']},
+  {d:'3',q:'음성·텍스트 기반 챗봇을 만드는 AWS AI 서비스는 Amazon _____이다.',a:'Lex',h:'대화형 AI',alts:[]},
+  {d:'3',q:'기업 내부 문서를 AI로 검색하는 서비스는 Amazon _____이다.',a:'Kendra',h:'기업 검색 엔진',alts:['켄드라']},
+  {d:'3',q:'S3에 저장된 데이터를 SQL로 직접 쿼리하는 분석 서비스는 Amazon _____이다.',a:'Athena',h:'서버리스 쿼리',alts:['아테나']},
+  {d:'3',q:'데이터를 시각화하는 BI 대시보드 서비스는 Amazon _____이다.',a:'QuickSight',h:'시각화',alts:['퀵사이트']},
+  {d:'3',q:'실시간 스트리밍 데이터를 수집·처리하는 서비스는 Amazon _____이다.',a:'Kinesis',h:'실시간 스트림',alts:['카이네시스','키네시스']},
+  {d:'3',q:'코드로 인프라를 정의하고 자동 프로비저닝하는 방식을 _____ 인프라(IaC)라 한다.',a:'코드형',h:'Infrastructure as Code',alts:['IaC','Infrastructure as Code']},
+  {d:'3',q:'AWS 리전 내 물리적으로 분리된 데이터센터 묶음을 _____ 영역(AZ)이라 한다.',a:'가용',h:'Availability Zone',alts:['availability','AZ']},
+  {d:'3',q:'CloudFront 같은 CDN 서비스가 사용하는 글로벌 캐시 거점을 _____ 로케이션이라 한다.',a:'엣지',h:'Edge Location',alts:['edge','엣지']},
+  {d:'3',q:'여러 AZ에 인스턴스를 분산 배치하면 달성할 수 있는 것은 _____ 가용성이다.',a:'고',h:'High Availability',alts:['high','HA']},
+  {d:'3',q:'Lambda, Fargate처럼 서버를 관리하지 않아도 되는 방식을 _____ 컴퓨팅이라 한다.',a:'서버리스',h:'serverless',alts:['serverless']},
+  {d:'3',q:'S3에서 오래된 데이터를 자동으로 저렴한 등급으로 이동시키는 설정은 _____ 정책이다.',a:'수명 주기',h:'Lifecycle Policy',alts:['lifecycle','Lifecycle Policy','수명주기']},
+  {d:'3',q:'코드 변경 시 자동으로 빌드·테스트·배포하는 CI/CD 파이프라인 서비스는 AWS _____이다.',a:'CodePipeline',h:'자동 배포 파이프라인',alts:['코드파이프라인']},
+  {d:'3',q:'앱 분산 추적을 위한 AWS 서비스는 AWS _____이다.',a:'X-Ray',h:'분산 추적',alts:['xray','엑스레이']},
+  {d:'3',q:'이미지·영상에서 객체, 얼굴을 인식하는 AWS AI 서비스는 Amazon _____이다.',a:'Rekognition',h:'이미지 인식',alts:['레코그니션']},
+  {d:'3',q:'문서에서 텍스트와 데이터를 자동 추출하는 서비스는 Amazon _____이다.',a:'Textract',h:'OCR + 구조 추출',alts:['텍스트랙트']},
+  {d:'3',q:'음성을 텍스트로 변환하는 서비스는 Amazon _____이다.',a:'Transcribe',h:'STT',alts:['트랜스크라이브']},
+  {d:'3',q:'텍스트를 음성으로 변환하는 서비스는 Amazon _____이다.',a:'Polly',h:'TTS',alts:['폴리']},
+  {d:'3',q:'다국어 텍스트 번역 서비스는 Amazon _____이다.',a:'Translate',h:'기계 번역',alts:['트랜슬레이트']},
+  {d:'3',q:'모바일/웹 앱 개발을 빠르게 도와주는 AWS 풀스택 플랫폼은 AWS _____이다.',a:'Amplify',h:'프론트엔드 개발',alts:['앰플리파이']},
+  {d:'3',q:'IoT 디바이스를 클라우드에 연결하고 관리하는 서비스는 AWS IoT _____이다.',a:'Core',h:'사물인터넷',alts:['코어']},
+  {d:'3',q:'S3 파일을 전 세계에 빠르게 배포하는 CDN 서비스는 Amazon _____이다.',a:'CloudFront',h:'CDN',alts:['클라우드프론트']},
+  {d:'3',q:'코드로 인프라를 정의하고 자동 생성하는 IaC 서비스는 AWS _____이다.',a:'CloudFormation',h:'인프라 자동화',alts:['클라우드포메이션']},
+  {d:'3',q:'여러 AWS 계정을 중앙에서 통합 관리하는 서비스는 AWS _____이다.',a:'Organizations',h:'계정 통합 관리',alts:['오거나이제이션스','오거니제이션스']},
+  {d:'3',q:'비용 사용 현황을 시각화하고 분석하는 서비스는 AWS Cost _____이다.',a:'Explorer',h:'비용 시각화',alts:['익스플로러']},
+  {d:'3',q:'비용 한도를 설정하고 초과 시 알림을 받는 서비스는 AWS _____이다.',a:'Budgets',h:'예산 알림',alts:['버짓','버짓스','예산']},
+  {d:'3',q:'관리형 컨테이너 이미지 저장소는 Amazon _____이다.',a:'ECR',h:'Elastic Container Registry',alts:['Elastic Container Registry']},
+  {d:'3',q:'클라우드와 온프레미스를 병행 사용하는 배포 모델은 _____ 모델이다.',a:'하이브리드',h:'hybrid',alts:['hybrid']},
+  {d:'3',q:'GPU가 필요한 ML 워크로드에는 _____ 컴퓨팅 최적화 인스턴스를 사용한다.',a:'가속',h:'GPU instance',alts:['accelerated','Accelerated Computing']},
+  {d:'3',q:'정형 데이터·관계 있음 → _____ DB, 비정형·대용량 → _____ DB',a:'관계형 / NoSQL',h:'RDS vs DynamoDB',alts:['relational / nosql','relational/nosql']},
+  {d:'2',q:'AWS가 인프라를, 고객이 그 위 운영을 책임지는 개념을 _____ 책임 모델이라 한다.',a:'공동',h:'Shared Responsibility Model',alts:['shared','Shared Responsibility']},
+  {d:'2',q:'공동 책임 모델에서 AWS는 클라우드 _____ 보안을 책임진다.',a:'의',h:'Security OF the cloud',alts:['of']},
+  {d:'2',q:'공동 책임 모델에서 고객은 클라우드 _____ 보안을 책임진다.',a:'안에서의',h:'Security IN the cloud',alts:['in']},
+  {d:'2',q:'EC2 사용 시 OS 패치 책임은 _____에게 있다.',a:'고객',h:'IaaS 고객 책임',alts:['customer','사용자']},
+  {d:'2',q:'RDS 사용 시 DB 엔진 패치 책임은 _____에게 있다.',a:'AWS',h:'관리형 서비스',alts:[]},
+  {d:'2',q:'Lambda 사용 시 런타임 환경 유지 책임은 _____에게 있다.',a:'AWS',h:'서버리스 = AWS 책임 증가',alts:[]},
+  {d:'2',q:'어떤 서비스든 데이터 암호화 설정과 IAM 설정은 항상 _____ 책임이다.',a:'고객',h:'데이터는 고객 것',alts:['customer','사용자']},
+  {d:'2',q:'AWS 계정 생성 시 자동으로 만들어지는 최고 권한 계정을 _____ 사용자라 한다.',a:'루트',h:'root user',alts:['root']},
+  {d:'2',q:'루트 사용자는 일상 업무에 쓰면 안 되며 반드시 _____ 설정을 해야 한다.',a:'MFA',h:'다중 인증',alts:['다중인증','Multi-Factor Authentication']},
+  {d:'2',q:'MFA란 비밀번호 외에 추가 인증 수단을 요구하는 _____ 인증이다.',a:'다중',h:'Multi-Factor Authentication',alts:['multi-factor','multifactor','MFA']},
+  {d:'2',q:'IAM에서 특정 사람에게 권한을 부여하는 최소 단위를 IAM _____라 한다.',a:'사용자',h:'IAM User',alts:['User','유저']},
+  {d:'2',q:'여러 IAM 사용자를 묶어 공통 정책을 적용하는 단위를 IAM _____라 한다.',a:'그룹',h:'IAM Group',alts:['Group']},
+  {d:'2',q:'사람이 아닌 AWS 서비스에 임시 권한을 부여할 때 사용하는 것은 IAM _____이다.',a:'역할',h:'IAM Role',alts:['Role','롤']},
+  {d:'2',q:'IAM에서 무엇을 허용/거부하는지 JSON으로 정의한 문서를 IAM _____이라 한다.',a:'정책',h:'IAM Policy',alts:['Policy','폴리시']},
+  {d:'2',q:'필요한 최소한의 권한만 부여해야 한다는 원칙을 _____ 권한의 원칙이라 한다.',a:'최소',h:'Least Privilege',alts:['least','Least Privilege','최솟값']},
+  {d:'2',q:'EC2가 S3에 접근해야 할 때 사용하는 것은 IAM _____이다.',a:'역할',h:'IAM Role for service',alts:['Role','롤']},
+  {d:'2',q:'DB 비밀번호·API 키를 안전하게 저장하고 자동 교체하는 서비스는 AWS _____ Manager이다.',a:'Secrets',h:'자격 증명 저장소',alts:['시크릿','Secrets Manager']},
+  {d:'2',q:'API 호출 이력을 기록하는 감사 로그 서비스는 AWS _____이다.',a:'CloudTrail',h:'감사 로그',alts:['클라우드트레일']},
+  {d:'2',q:'리소스 성능 지표를 모니터링하고 알람을 설정하는 서비스는 Amazon _____이다.',a:'CloudWatch',h:'운영 모니터링',alts:['클라우드워치']},
+  {d:'2',q:'리소스 설정 변경 이력을 추적하는 서비스는 AWS _____이다.',a:'Config',h:'구성 추적',alts:['컨피그']},
+  {d:'2',q:'"누가 S3 버킷을 삭제했는지 추적"하려면 AWS _____를 확인한다.',a:'CloudTrail',h:'API 호출 기록',alts:['클라우드트레일']},
+  {d:'2',q:'"CPU 80% 초과 시 알림"을 설정하려면 Amazon _____를 사용한다.',a:'CloudWatch',h:'메트릭 알람',alts:['클라우드워치']},
+  {d:'2',q:'DDoS 공격을 방어하는 AWS 서비스는 AWS _____이다.',a:'Shield',h:'DDoS 방어',alts:['쉴드']},
+  {d:'2',q:'AWS Shield Standard는 _____ 비용이고 Advanced는 _____ 서비스이다.',a:'무료 / 유료',h:'기본 vs 고급',alts:['free / paid','free/paid']},
+  {d:'2',q:'SQL 인젝션, XSS 등 악성 HTTP 요청을 차단하는 서비스는 AWS _____이다.',a:'WAF',h:'Web Application Firewall',alts:['Web Application Firewall','웹방화벽']},
+  {d:'2',q:'DDoS는 _____로, SQL 인젝션은 _____로 방어한다.',a:'Shield / WAF',h:'공격 유형별 서비스',alts:['쉴드 / WAF','Shield/WAF']},
+  {d:'2',q:'AWS 계정 내 비정상 활동과 위협을 자동 탐지하는 서비스는 Amazon _____이다.',a:'GuardDuty',h:'위협 탐지',alts:['가드듀티']},
+  {d:'2',q:'EC2·컨테이너의 보안 취약점을 자동 스캔하는 서비스는 Amazon _____이다.',a:'Inspector',h:'취약점 스캔',alts:['인스펙터']},
+  {d:'2',q:'여러 보안 서비스 결과를 한 곳에서 통합 조회하는 서비스는 AWS _____ Hub이다.',a:'Security',h:'보안 대시보드',alts:['시큐리티','보안']},
+  {d:'2',q:'S3에서 개인정보(PII)를 자동으로 찾아내는 서비스는 Amazon _____이다.',a:'Macie',h:'개인정보 탐지',alts:['메이시']},
+  {d:'2',q:'데이터 이동 중 적용하는 암호화를 _____ 중 암호화라 한다.',a:'전송',h:'In-transit',alts:['in-transit','intransit','transit']},
+  {d:'2',q:'디스크에 저장된 상태의 암호화를 _____ 시 암호화라 한다.',a:'저장',h:'At-rest',alts:['at-rest','atrest','rest']},
+  {d:'2',q:'ISO, SOC 같은 규정 준수 문서를 다운로드할 수 있는 서비스는 AWS _____이다.',a:'Artifact',h:'규정 준수 문서 포털',alts:['아티팩트']},
+  {d:'2',q:'보안 설정 모범 사례를 자동 점검하는 서비스는 AWS Trusted _____이다.',a:'Advisor',h:'운영 조언자',alts:['어드바이저']},
+  {d:'2',q:'앱 사용자 로그인·회원가입을 관리하는 서비스는 Amazon _____이다.',a:'Cognito',h:'사용자 인증',alts:['코그니토']},
+  {d:'2',q:'암호화 키를 중앙에서 생성·관리하는 서비스는 AWS _____이다.',a:'KMS',h:'Key Management Service',alts:['Key Management Service','키관리서비스']},
+  {d:'2',q:'전용 하드웨어 보안 모듈로 키를 관리하는 서비스는 AWS _____이다.',a:'CloudHSM',h:'하드웨어 암호화',alts:['클라우드HSM']},
+  {d:'2',q:'최소 권한 원칙에 따라 새 IAM 사용자의 초기 권한은 _____이다.',a:'없음',h:'기본값은 권한 없음',alts:['none','no permission','권한없음']},
+  {d:'2',q:'여러 AWS 계정에 SSO로 로그인하게 해주는 서비스는 AWS IAM _____ Center이다.',a:'Identity',h:'SSO',alts:['아이덴티티']},
+  {d:'2',q:'외부 자격 증명 공급자(Google 등)를 AWS에 연동하는 방식을 _____이라 한다.',a:'페더레이션',h:'federation',alts:['federation','페더레이션','federated']},
+  {d:'2',q:'규정 준수 감사를 자동화해주는 서비스는 AWS Audit _____이다.',a:'Manager',h:'감사 자동화',alts:['매니저']},
+  {d:'2',q:'보안 위반 원인을 조사하는 서비스는 Amazon _____이다.',a:'Detective',h:'보안 조사',alts:['디텍티브']},
+  {d:'2',q:'GuardDuty는 _____ 탐지, Inspector는 _____ 스캔, Security Hub는 _____ 통합이다.',a:'위협 / 취약점 / 보안 결과',h:'세 서비스 구분',alts:['threat / vulnerability / security findings','threat/vulnerability/securityfindings']},
+  {d:'1',q:'AWS가 제안하는 좋은 아키텍처 설계 원칙 모음을 AWS _____ Framework라 한다.',a:'Well-Architected',h:'6대 기둥',alts:['웰아키텍티드','well architected']},
+  {d:'1',q:'Well-Architected 기둥 중 장애에서 자동 복구하고 확장하는 기둥은 _____이다.',a:'신뢰성',h:'Reliability',alts:['Reliability','릴라이어빌리티']},
+  {d:'1',q:'Well-Architected에서 자동화와 지속적 운영 개선을 다루는 기둥은 _____ 우수성이다.',a:'운영',h:'Operational Excellence',alts:['operational','Operational Excellence']},
+  {d:'1',q:'Well-Architected에서 모든 레이어에 보안을 적용하는 기둥은 _____이다.',a:'보안',h:'Security',alts:['Security']},
+  {d:'1',q:'Well-Architected에서 적합한 리소스를 효율적으로 사용하는 기둥은 _____ 효율성이다.',a:'성능',h:'Performance Efficiency',alts:['performance','Performance Efficiency']},
+  {d:'1',q:'Well-Architected에서 불필요한 비용 없이 가치를 제공하는 기둥은 _____ 최적화이다.',a:'비용',h:'Cost Optimization',alts:['cost','Cost Optimization']},
+  {d:'1',q:'Well-Architected의 6번째 기둥으로 환경 영향 최소화를 다루는 기둥은 _____ 가능성이다.',a:'지속',h:'Sustainability',alts:['sustainability','서스테이너빌리티']},
+  {d:'1',q:'"다중 AZ 배포로 장애 시 자동 복구" 시나리오는 _____ 기둥에 해당한다.',a:'신뢰성',h:'Reliability',alts:['Reliability']},
+  {d:'1',q:'"서버 크기를 워크로드에 맞게 최적화" 시나리오는 _____ 기둥에 해당한다.',a:'비용 최적화',h:'Cost Optimization',alts:['Cost Optimization','costoptimization']},
+  {d:'1',q:'"CloudFormation으로 인프라 배포 자동화" 시나리오는 _____ 기둥에 해당한다.',a:'운영 우수성',h:'Operational Excellence',alts:['Operational Excellence','operationalexcellence']},
+  {d:'1',q:'서버 구매처럼 사전에 큰 비용을 지출하는 방식을 _____ 지출(CapEx)이라 한다.',a:'자본적',h:'Capital Expenditure',alts:['CapEx','capital','Capital Expenditure']},
+  {d:'1',q:'클라우드처럼 사용한 만큼만 지불하는 방식을 _____ 지출(OpEx)이라 한다.',a:'운영',h:'Operational Expenditure',alts:['OpEx','operational','Operational Expenditure']},
+  {d:'1',q:'AWS 대규모 운영으로 단가를 낮춰 고객에게 저렴하게 제공하는 효과를 _____ 경제라 한다.',a:'규모의',h:'economies of scale',alts:['economies of scale','economiesofscale']},
+  {d:'1',q:'실제 사용량에 맞게 인스턴스 크기를 조정해 비용을 줄이는 것을 _____ 조정이라 한다.',a:'적정 규모',h:'Right Sizing',alts:['Right Sizing','rightsizing','right sizing']},
+  {d:'1',q:'트래픽에 따라 자동으로 리소스가 늘고 줄어드는 특성을 _____성이라 한다.',a:'탄력',h:'Elasticity',alts:['Elasticity','elastic']},
+  {d:'1',q:'장애가 발생해도 서비스가 중단되지 않는 특성을 _____ 가용성이라 한다.',a:'고',h:'High Availability',alts:['high','HA','High Availability']},
+  {d:'1',q:'빠르게 실험하고 배포할 수 있는 클라우드 특성을 _____성이라 한다.',a:'민첩',h:'Agility',alts:['Agility','agile']},
+  {d:'1',q:'전 세계 리전에 몇 분 만에 배포할 수 있는 클라우드의 특성은 _____ 도달 범위이다.',a:'글로벌',h:'global reach',alts:['global','Global']},
+  {d:'1',q:'클라우드 도입을 6개 관점으로 나누는 프레임워크는 AWS _____이다.',a:'CAF',h:'Cloud Adoption Framework',alts:['Cloud Adoption Framework']},
+  {d:'1',q:'AWS CAF의 6관점 중 경영진·CFO가 담당하는 관점은 _____ 관점이다.',a:'비즈니스',h:'Business',alts:['Business']},
+  {d:'1',q:'AWS CAF에서 조직 구조와 인력 변화를 다루는 관점은 _____ 관점이다.',a:'인력',h:'People',alts:['People']},
+  {d:'1',q:'AWS CAF에서 리스크 최소화·IT 거버넌스를 다루는 관점은 _____ 관점이다.',a:'거버넌스',h:'Governance',alts:['Governance']},
+  {d:'1',q:'AWS CAF에서 아키텍트·CTO가 담당하는 플랫폼 구축 관점은 _____ 관점이다.',a:'플랫폼',h:'Platform',alts:['Platform']},
+  {d:'1',q:'AWS CAF에서 CISO가 담당하는 관점은 _____ 관점이다.',a:'보안',h:'Security',alts:['Security']},
+  {d:'1',q:'AWS CAF에서 클라우드 서비스 일상 운영을 다루는 관점은 _____ 관점이다.',a:'운영',h:'Operations',alts:['Operations']},
+  {d:'1',q:'기존 서버를 변경 없이 그대로 AWS로 이전하는 전략을 _____ 또는 Lift and Shift라 한다.',a:'Rehost',h:'리호스트',alts:['리호스트','rehosting']},
+  {d:'1',q:'DB를 EC2 직설치에서 RDS로 바꾸는 최소 최적화 이전 전략은 _____이다.',a:'Replatform',h:'Lift Tinker Shift',alts:['리플랫폼','replatforming']},
+  {d:'1',q:'클라우드 네이티브로 앱을 완전히 재설계하는 전략은 _____이다.',a:'Refactor',h:'Re-architect',alts:['리팩터','Re-architect','rearchitect','refactoring']},
+  {d:'1',q:'더 이상 필요 없는 앱을 폐기하는 마이그레이션 전략은 _____이다.',a:'Retire',h:'퇴역',alts:['리타이어','retiring']},
+  {d:'1',q:'기존 앱을 SaaS 솔루션으로 교체하는 전략은 _____이다.',a:'Repurchase',h:'재구매',alts:['리퍼체이스','repurchasing']},
+  {d:'1',q:'아직 이전하지 않고 현재 환경을 유지하는 전략은 _____이다.',a:'Retain',h:'보류',alts:['리테인','retaining']},
+  {d:'1',q:'리전 내 AZ들은 서로 단일 _____ 지점을 공유하지 않아 장애 격리가 된다.',a:'장애',h:'single point of failure',alts:['single point of failure','SPOF','failure']},
+  {d:'1',q:'사용자와 가까운 곳에 배포해 _____ 시간을 줄이는 것이 다중 리전 사용 이유 중 하나이다.',a:'지연',h:'latency',alts:['latency','레이턴시']},
+  {d:'1',q:'데이터가 특정 국가 밖으로 나가면 안 된다는 요구를 _____ 주권이라 한다.',a:'데이터',h:'data sovereignty',alts:['data','Data Sovereignty']},
+  {d:'1',q:'"서버리스로 유휴 리소스 제거"는 _____ 최적화와 _____ 가능성 기둥에 해당한다.',a:'비용 / 지속',h:'두 기둥 중복',alts:['Cost / Sustainability','cost/sustainability']},
+  {d:'1',q:'클라우드 이전 시 서버 구매·유지 비용이 사라져 _____ 비용이 절감된다.',a:'자본적',h:'CapEx 절감',alts:['CapEx','capital']},
+  {d:'1',q:'AWS CAF 도입 시 기대 효과로 비즈니스 _____ 감소, 수익 증대, 운영 효율성 향상이 있다.',a:'위험',h:'risk reduction',alts:['risk','리스크']},
+];
+
+let domain='all', mode='fill', idx=0, answers={}, checked={}, wrong=new Set(), rounds={};
+
+function getFiltered(){
+  if(domain==='wrong') return [...wrong].map(i=>({...Q[i],orig:i}));
+  if(domain==='all') return Q.map((q,i)=>({...q,orig:i}));
+  return Q.map((q,i)=>({...q,orig:i})).filter(q=>q.d===domain);
+}
+
+let filtered=getFiltered();
+
+function setDomain(d){
+  domain=d;
+  document.querySelectorAll('.dbtn').forEach((b,i)=>{b.classList.toggle('active',['all','3','2','1','wrong'][i]===d);});
+  filtered=getFiltered(); idx=0; answers={}; checked={};
+  updateScore(); render();
+}
+
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.mbtn').forEach((b,i)=>{b.classList.toggle('active',['fill','review'][i]===m);});
+  render();
+}
+
+function resetQuiz(){
+  answers={}; checked={}; wrong=new Set(); idx=0;
+  filtered=getFiltered(); updateScore(); render();
+}
+
+function norm(s){ return s.trim().toLowerCase().replace(/\s+/g,'').replace(/[\/,\-\s]/g,''); }
+
+function checkAns(i){
+  const inp=document.getElementById('ai'+i);
+  if(!inp) return;
+  answers[i]=inp.value;
+  const q=filtered[i];
+  const mainAnswers=q.a.split('/').map(s=>s.trim());
+  const altAnswers=(q.alts||[]).flatMap(s=>s.split('/').map(t=>t.trim()));
+  const allAnswers=[...mainAnswers,...altAnswers];
+  const ok=allAnswers.some(a=>norm(inp.value)===norm(a));
+  checked[i]=ok;
+  if(!ok) wrong.add(q.orig); else wrong.delete(q.orig);
+  updateScore(); render();
+}
+
+function updateScore(){
+  const total=filtered.length;
+  const done=Object.keys(checked).length;
+  const c=Object.values(checked).filter(v=>v).length;
+  const w=Object.values(checked).filter(v=>!v).length;
+  document.getElementById('sc-c').textContent=c;
+  document.getElementById('sc-w').textContent=w;
+  document.getElementById('sc-rem').textContent=total-done;
+  document.getElementById('sc-rate').textContent=done>0?Math.round(c/done*100)+'%':'0%';
+  document.getElementById('prog-fill').style.width=(total>0?done/total*100:0)+'%';
+  document.getElementById('prog-txt').textContent=done+'/'+total;
+  const roundNum=done>0?Math.floor(done/total)+1:1;
+  document.getElementById('round-badge').textContent=roundNum+'회독 중 (총 '+total+'문제)';
+}
+
+function movePrev(){ if(idx>0){idx--;render();} }
+function moveNext(){ if(idx<filtered.length-1){idx++;render();} }
+
+function render(){
+  filtered=getFiltered();
+  if(idx>=filtered.length) idx=Math.max(0,filtered.length-1);
+  const area=document.getElementById('q-area');
+  if(filtered.length===0){area.innerHTML='<div class="empty">해당 문제가 없습니다.</div>';return;}
+  const q=filtered[idx];
+  const tc=q.d==='3'?'t3':q.d==='2'?'t2':'t1';
+  const tl='도메인 '+q.d;
+  const isCk=checked[idx]!==undefined;
+  const isOk=checked[idx]===true;
+
+  let html=`<div class="q-card">
+    <span class="dtag ${tc}">${tl}</span>
+    <div class="qnum">${idx+1} / ${filtered.length}</div>
+    <div class="qtext">${q.q.replace('_____','<span class="blank-mark">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')}</div>`;
+
+  if(mode==='review'){
+    html+=`<div style="font-size:15px;font-weight:600;color:#1a8a5e;margin:8px 0;">정답: ${q.a}</div>
+    ${q.alts&&q.alts.length>0?`<div style="font-size:12px;color:#888;margin-top:4px;">함께 인정되는 표현: ${q.alts.join(' · ')}</div>`:''}
+    <div class="hint">힌트: ${q.h}</div>`;
+  } else {
+    if(!isCk){
+      html+=`<input class="ans-input" id="ai${idx}" type="text" placeholder="정답 입력 후 확인" value="${answers[idx]||''}" onkeydown="if(event.key==='Enter')checkAns(${idx})">
+      <div class="btn-row">
+        <button class="btn btn-check" onclick="answers[${idx}]=document.getElementById('ai${idx}').value;checkAns(${idx})">확인 ✓</button>
+        <button class="btn btn-skip" onclick="checked[${idx}]=false;wrong.add(filtered[${idx}].orig);updateScore();moveNext()">모름</button>
+      </div>`;
+    } else {
+      if(isOk){
+        html+=`<div class="fb ok">✓ 정답! <span class="kw">${q.a}</span></div>`;
+      } else {
+        const altStr=q.alts&&q.alts.length>0?`<br><small style="color:#555;">인정 표현: ${q.a} · ${q.alts.join(' · ')}</small>`:``;
+        html+=`<div class="fb ng">✗ 오답. 정답: <span class="kw">${q.a}</span>${answers[i]?' | 내 답: '+answers[i]:''}${altStr}<br><small>힌트: ${q.h}</small></div>`;
+      }
+      html+=`<div class="btn-row" style="margin-top:10px;"><button class="btn btn-next" onclick="moveNext()">다음 →</button></div>`;
+    }
+  }
+  html+=`</div>`;
+  area.innerHTML=html;
+
+  if(mode==='fill'&&!isCk){
+    const inp=document.getElementById('ai'+idx);
+    if(inp) setTimeout(()=>inp.focus(),100);
+  }
+
+  document.getElementById('btn-prev').disabled=idx===0;
+  document.getElementById('btn-next').disabled=idx===filtered.length-1;
+}
+
+updateScore(); render();
+</script>
+</body>
+</html>

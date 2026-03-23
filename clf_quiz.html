@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AWS CLF 객관식</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;}
+.topbar{background:#232f3e;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar h1{font-size:16px;font-weight:600;}
+.topbar .ver{font-size:11px;color:#ff9900;font-weight:600;}
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 16px;background:#fff;border-bottom:1px solid #e8e8e0;}
+.scard{text-align:center;padding:8px 4px;border-radius:8px;background:#f8f8f4;}
+.scard .n{font-size:20px;font-weight:700;}
+.scard .l{font-size:10px;color:#888;margin-top:1px;}
+.n.c{color:#1a8a5e;} .n.w{color:#d93025;} .n.r{color:#f29900;}
+.domain-row{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;background:#fff;border-bottom:1px solid #e8e8e0;}
+.domain-row::-webkit-scrollbar{display:none;}
+.dbtn{padding:7px 14px;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-size:12px;white-space:nowrap;cursor:pointer;font-weight:500;color:#555;}
+.dbtn.active{background:#232f3e;color:#fff;border-color:#232f3e;}
+.prog-wrap{padding:10px 16px 12px;background:#fff;}
+.prog-bar{height:4px;background:#e8e8e0;border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:#1a8a5e;border-radius:99px;transition:width .3s;}
+.prog-txt{font-size:11px;color:#888;margin-top:4px;text-align:right;}
+.q-wrap{padding:12px 16px 120px;}
+.q-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e8e8e0;}
+.dtag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.t3{background:#e8f4fd;color:#1565c0;} .t2{background:#fff3e0;color:#e65100;} .t1{background:#e8f5e9;color:#2e7d32;}
+.qnum{font-size:11px;color:#aaa;margin-bottom:6px;}
+.qtext{font-size:15px;line-height:1.7;color:#1a1a1a;margin-bottom:16px;font-weight:500;}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;border-radius:10px;border:1.5px solid #e0e0e0;background:#fafaf8;font-size:14px;line-height:1.5;margin-bottom:8px;cursor:pointer;color:#1a1a1a;transition:all .15s;}
+.opt:active{transform:scale(.98);}
+.opt.selected{border-color:#232f3e;background:#f0f4f8;}
+.opt.correct{border-color:#1a8a5e;background:#e8f5e9;color:#1b5e20;font-weight:600;}
+.opt.wrong{border-color:#d93025;background:#ffebee;color:#b71c1c;}
+.opt.reveal{border-color:#1a8a5e;background:#e8f5e9;color:#1b5e20;}
+.explanation{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.7;}
+.ex-ok{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20;}
+.ex-ng{background:#fff3e0;border:1px solid #ffcc80;color:#e65100;}
+.ex-kw{font-weight:700;}
+.nav-row{position:fixed;bottom:0;left:0;right:0;display:flex;gap:10px;padding:12px 16px 20px;background:#fff;border-top:1px solid #e8e8e0;z-index:50;}
+.nav-btn{flex:1;padding:13px;border-radius:10px;border:1.5px solid #ddd;background:#fff;font-size:14px;font-weight:600;color:#333;cursor:pointer;}
+.nav-btn:disabled{opacity:.3;}
+.nav-btn.active-nav{background:#ff9900;color:#fff;border-color:#ff9900;}
+.empty{text-align:center;padding:60px 20px;color:#aaa;font-size:15px;}
+.round-badge{font-size:11px;color:#888;text-align:center;padding:6px 16px 10px;background:#fff;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>AWS CLF 시나리오 객관식</h1>
+  <span class="ver">CLF-C02</span>
+</div>
+
+<div class="score-row">
+  <div class="scard"><div class="n c" id="sc-c">0</div><div class="l">정답</div></div>
+  <div class="scard"><div class="n w" id="sc-w">0</div><div class="l">오답</div></div>
+  <div class="scard"><div class="n" id="sc-rem">0</div><div class="l">남음</div></div>
+  <div class="scard"><div class="n r" id="sc-rate">0%</div><div class="l">정답률</div></div>
+</div>
+
+<div class="domain-row">
+  <button class="dbtn active" onclick="setDomain('all')">전체</button>
+  <button class="dbtn" onclick="setDomain('3')">도메인3</button>
+  <button class="dbtn" onclick="setDomain('2')">도메인2</button>
+  <button class="dbtn" onclick="setDomain('1')">도메인1</button>
+  <button class="dbtn" onclick="setDomain('wrong')">오답만</button>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="prog-txt" id="prog-txt">0 / 0</div>
+</div>
+<div class="round-badge" id="round-badge">1회독 중</div>
+
+<div class="q-wrap" id="q-area"></div>
+
+<div class="nav-row">
+  <button class="nav-btn" id="btn-prev" onclick="movePrev()" disabled>이전</button>
+  <button class="nav-btn active-nav" onclick="resetQuiz()">처음부터</button>
+  <button class="nav-btn" id="btn-next" onclick="moveNext()" disabled>다음</button>
+</div>
+
+<script>
+const Q=[
+  {d:'3',q:'한 스타트업이 트래픽 급증 시 서버를 자동으로 늘리고, 트래픽이 줄면 다시 줄이고 싶습니다. 어떤 기능을 사용해야 합니까?',opts:['Amazon CloudWatch','AWS Auto Scaling','AWS Lambda','Amazon EBS'],ans:1,ex:'Auto Scaling은 수요에 따라 EC2 인스턴스 수를 자동으로 조절합니다. CloudWatch는 모니터링, Lambda는 서버리스 실행, EBS는 스토리지입니다.'},
+  {d:'3',q:'개발자가 서버 프로비저닝 없이 코드를 업로드하고 이벤트 발생 시에만 실행되는 환경을 원합니다. 가장 적합한 서비스는?',opts:['Amazon EC2','AWS Lambda','Amazon ECS','AWS Fargate'],ans:1,ex:'Lambda는 서버 없이 코드만 실행하는 서버리스 서비스입니다. EC2는 서버 직접 관리, ECS/Fargate는 컨테이너 실행입니다.'},
+  {d:'3',q:'기업이 수백만 건의 이미지 파일을 저장해야 합니다. 가장 적합한 AWS 스토리지는?',opts:['Amazon EBS','Amazon EFS','Amazon S3','AWS Storage Gateway'],ans:2,ex:'S3는 객체 스토리지로 이미지·동영상 등 비정형 파일을 무제한 저장합니다. EBS는 EC2용 블록 스토리지, EFS는 공유 파일 시스템입니다.'},
+  {d:'3',q:'5년 이상 보관하지만 거의 꺼낼 일 없는 백업 데이터를 가장 저렴하게 저장하려면?',opts:['S3 Standard','S3 Standard-IA','S3 Glacier','Amazon EBS'],ans:2,ex:'Glacier는 장기 아카이브용으로 S3 등급 중 가장 저렴합니다. Standard는 자주 접근, IA는 가끔 접근용입니다.'},
+  {d:'3',q:'여러 EC2 인스턴스가 동시에 같은 파일을 읽고 써야 하는 공유 파일 시스템이 필요합니다.',opts:['Amazon EBS','Amazon S3','Amazon EFS','AWS Storage Gateway'],ans:2,ex:'EFS는 여러 EC2가 동시에 접근할 수 있는 공유 파일 시스템입니다. EBS는 하나의 EC2에만 연결됩니다.'},
+  {d:'3',q:'웹 애플리케이션에 들어오는 HTTP 트래픽을 여러 EC2 인스턴스에 자동으로 분산하려면?',opts:['Amazon Route 53','Elastic Load Balancing','AWS Auto Scaling','Amazon CloudFront'],ans:1,ex:'ELB(Elastic Load Balancing)는 여러 EC2에 트래픽을 분산합니다. Route 53은 DNS, Auto Scaling은 인스턴스 수 조절, CloudFront는 CDN입니다.'},
+  {d:'3',q:'관계형 데이터베이스 MySQL을 서버 관리 없이 AWS에서 운영하고 싶습니다.',opts:['Amazon DynamoDB','Amazon RDS','Amazon ElastiCache','Amazon Redshift'],ans:1,ex:'RDS는 MySQL 등 관계형 DB를 관리형으로 운영합니다. DynamoDB는 NoSQL, ElastiCache는 캐시입니다.'},
+  {d:'3',q:'쇼핑몰 상품 목록처럼 반복적으로 조회되는 데이터를 빠르게 제공하기 위해 메모리 캐시를 도입하려 합니다.',opts:['Amazon RDS','Amazon DynamoDB','Amazon ElastiCache','Amazon Aurora'],ans:2,ex:'ElastiCache(Redis/Memcached)는 메모리 기반 캐시로 반복 쿼리 응답 속도를 높입니다.'},
+  {d:'3',q:'IoT 센서에서 실시간으로 대량의 데이터가 들어옵니다. 이를 실시간으로 수집·처리하는 서비스는?',opts:['Amazon S3','Amazon Kinesis','Amazon Athena','AWS Glue'],ans:1,ex:'Kinesis는 실시간 스트리밍 데이터 수집·처리 서비스입니다. S3는 저장, Athena는 쿼리, Glue는 ETL입니다.'},
+  {d:'3',q:'회사가 기존 온프레미스 Oracle DB를 AWS로 이전하려 합니다. DB 스키마 변환이 필요할 때 사용하는 도구는?',opts:['AWS DMS','AWS SCT','AWS Snowball','AWS Migration Hub'],ans:1,ex:'SCT(Schema Conversion Tool)는 이기종 DB 간 스키마 변환 도구입니다. DMS는 데이터 이전, Snowball은 물리 데이터 전송입니다.'},
+  {d:'3',q:'AWS에서 나만의 가상 네트워크를 구성하고 서브넷, 라우팅을 직접 설정하려면?',opts:['AWS Direct Connect','Amazon VPC','AWS VPN','Amazon Route 53'],ans:1,ex:'VPC(Virtual Private Cloud)는 AWS에서 나만의 가상 네트워크를 구성하는 서비스입니다.'},
+  {d:'3',q:'EC2 인스턴스 수준에서 인바운드·아웃바운드 트래픽을 제어하는 가상 방화벽은?',opts:['네트워크 ACL','보안 그룹','AWS WAF','AWS Shield'],ans:1,ex:'보안 그룹은 EC2 인스턴스 레벨의 방화벽으로 Stateful 방식입니다. 네트워크 ACL은 서브넷 레벨, WAF는 웹 방화벽입니다.'},
+  {d:'3',q:'서브넷 레벨에서 트래픽을 제어하며 인바운드·아웃바운드를 각각 명시해야 하는 방화벽은?',opts:['보안 그룹','네트워크 ACL','AWS WAF','Amazon Inspector'],ans:1,ex:'네트워크 ACL은 서브넷 레벨의 Stateless 방화벽입니다. 보안 그룹은 EC2 레벨, Stateful입니다.'},
+  {d:'3',q:'사용자가 example.com을 입력했을 때 EC2 인스턴스 IP로 연결해주는 서비스는?',opts:['Amazon CloudFront','Elastic Load Balancing','Amazon Route 53','AWS Direct Connect'],ans:2,ex:'Route 53은 AWS DNS 서비스로 도메인을 IP로 변환합니다. CloudFront는 CDN, ELB는 부하분산입니다.'},
+  {d:'3',q:'온프레미스 데이터센터와 AWS를 인터넷이 아닌 전용 물리 회선으로 연결하고 싶습니다.',opts:['AWS VPN','AWS Direct Connect','Amazon CloudFront','Amazon VPC Peering'],ans:1,ex:'Direct Connect는 전용선으로 AWS와 연결합니다. VPN은 인터넷을 통한 암호화 연결입니다.'},
+  {d:'3',q:'챗봇을 만들어 고객 상담을 자동화하려 합니다. 가장 적합한 AWS AI 서비스는?',opts:['Amazon SageMaker','Amazon Lex','Amazon Kendra','Amazon Rekognition'],ans:1,ex:'Lex는 음성·텍스트 기반 챗봇 제작 서비스입니다. SageMaker는 ML 모델 개발, Kendra는 검색, Rekognition은 이미지 인식입니다.'},
+  {d:'3',q:'회사 내부 문서 수천 개에서 직원이 질문하면 관련 내용을 찾아주는 AI 검색 서비스가 필요합니다.',opts:['Amazon Lex','Amazon Kendra','Amazon Textract','AWS Glue'],ans:1,ex:'Kendra는 기업 내부 문서를 AI로 검색하는 엔터프라이즈 검색 서비스입니다.'},
+  {d:'3',q:'S3에 저장된 수억 건의 로그 파일을 SQL로 직접 분석하려 합니다. 서버 없이 쿼리할 수 있는 서비스는?',opts:['Amazon Redshift','Amazon Athena','Amazon EMR','AWS Glue'],ans:1,ex:'Athena는 S3 데이터를 서버 없이 SQL로 직접 쿼리하는 서버리스 분석 서비스입니다.'},
+  {d:'3',q:'Docker 컨테이너를 EC2 서버 없이 서버리스로 실행하려 합니다.',opts:['Amazon ECS with EC2','AWS Fargate','Amazon EKS','Amazon ECR'],ans:1,ex:'Fargate는 컨테이너를 서버리스로 실행합니다. EC2 인스턴스 관리가 필요 없습니다.'},
+  {d:'3',q:'코드를 변경하면 자동으로 빌드·테스트·배포까지 이루어지는 파이프라인을 구성하려면?',opts:['AWS CodeBuild','AWS CodePipeline','AWS X-Ray','AWS CloudFormation'],ans:1,ex:'CodePipeline은 CI/CD 자동화 파이프라인 서비스입니다. CodeBuild는 빌드 단계, CloudFormation은 인프라 자동화입니다.'},
+  {d:'3',q:'분산 마이크로서비스에서 요청이 어디서 느려지는지 추적하려 합니다.',opts:['Amazon CloudWatch','AWS X-Ray','AWS CloudTrail','Amazon Inspector'],ans:1,ex:'X-Ray는 분산 애플리케이션의 요청 흐름을 추적하는 서비스입니다.'},
+  {d:'3',q:'Kubernetes 클러스터를 AWS에서 관리형으로 운영하려 합니다.',opts:['Amazon ECS','Amazon EKS','AWS Fargate','Amazon ECR'],ans:1,ex:'EKS(Elastic Kubernetes Service)는 Kubernetes를 AWS에서 관리형으로 운영합니다.'},
+  {d:'3',q:'인프라를 YAML/JSON 코드로 정의하고 자동으로 생성·삭제하려 합니다.',opts:['AWS CodePipeline','AWS CloudFormation','AWS Systems Manager','AWS Config'],ans:1,ex:'CloudFormation은 코드로 AWS 인프라를 정의하고 자동 프로비저닝하는 IaC 서비스입니다.'},
+  {d:'3',q:'S3에 저장된 오래된 데이터를 자동으로 Glacier로 이동시키는 설정은?',opts:['S3 Transfer Acceleration','S3 수명 주기 정책','S3 버전 관리','S3 복제'],ans:1,ex:'수명 주기 정책(Lifecycle Policy)으로 날짜 기준으로 자동 스토리지 등급 이동이 가능합니다.'},
+  {d:'3',q:'정적 웹사이트 파일을 전 세계 사용자에게 빠르게 제공하기 위한 CDN 서비스는?',opts:['Amazon Route 53','Amazon CloudFront','AWS Global Accelerator','Elastic Load Balancing'],ans:1,ex:'CloudFront는 엣지 로케이션을 활용한 AWS CDN 서비스입니다.'},
+  {d:'3',q:'머신러닝 모델을 처음부터 끝까지(데이터 준비→훈련→배포) 통합 지원하는 서비스는?',opts:['Amazon Rekognition','Amazon Lex','Amazon SageMaker','Amazon Comprehend'],ans:2,ex:'SageMaker는 ML 모델의 전체 라이프사이클을 지원하는 통합 플랫폼입니다.'},
+  {d:'3',q:'여러 AWS 계정의 비용을 하나의 청구서로 통합하고 중앙에서 관리하려면?',opts:['AWS Cost Explorer','AWS Budgets','AWS Organizations','AWS Trusted Advisor'],ans:2,ex:'Organizations는 여러 AWS 계정을 통합 관리하며 통합 결제도 제공합니다.'},
+  {d:'3',q:'월별 AWS 비용이 특정 금액을 초과하면 즉시 이메일 알림을 받으려면?',opts:['AWS Cost Explorer','AWS Budgets','Amazon CloudWatch','AWS Trusted Advisor'],ans:1,ex:'Budgets는 비용 임계값 설정 및 초과 시 알림 기능을 제공합니다.'},
+  {d:'3',q:'비디오에서 얼굴·객체를 인식하고 부적절한 콘텐츠를 자동 탐지하려면?',opts:['Amazon Textract','Amazon Rekognition','Amazon Comprehend','Amazon Transcribe'],ans:1,ex:'Rekognition은 이미지·비디오에서 객체, 얼굴, 텍스트, 부적절 콘텐츠를 인식합니다.'},
+  {d:'3',q:'회의 녹음 파일을 텍스트로 자동 변환하려 합니다.',opts:['Amazon Polly','Amazon Translate','Amazon Transcribe','Amazon Textract'],ans:2,ex:'Transcribe는 음성을 텍스트로 변환하는 STT 서비스입니다. Polly는 반대(TTS)입니다.'},
+  {d:'3',q:'스캔한 PDF 계약서에서 날짜, 금액 등 구조화된 데이터를 자동 추출하려면?',opts:['Amazon Rekognition','Amazon Textract','Amazon Comprehend','Amazon Kendra'],ans:1,ex:'Textract는 문서에서 텍스트와 구조화된 데이터를 자동 추출하는 OCR+ 서비스입니다.'},
+  {d:'2',q:'AWS 데이터센터 물리 보안에 대한 책임은 누구에게 있습니까?',opts:['고객','AWS','고객과 AWS 공동','해당 리전 정부'],ans:1,ex:'공동 책임 모델에서 데이터센터 물리 보안, 하드웨어는 AWS의 책임입니다.'},
+  {d:'2',q:'EC2 인스턴스에서 OS 패치를 적용하지 않아 보안 침해가 발생했습니다. 책임은?',opts:['AWS','고객','클라우드 공급업체','해당 없음'],ans:1,ex:'EC2(IaaS)에서 OS 패치는 고객 책임입니다. AWS는 하이퍼바이저 아래만 책임집니다.'},
+  {d:'2',q:'RDS 데이터베이스 엔진 패치를 적용하는 책임은 누구에게 있습니까?',opts:['고객','AWS','DBA','운영팀'],ans:1,ex:'RDS는 관리형 서비스로 DB 엔진 패치는 AWS 책임입니다. 고객은 데이터·접근 권한만 책임집니다.'},
+  {d:'2',q:'Lambda 함수를 사용할 때 런타임 환경 유지 책임은 누구에게 있습니까?',opts:['고객','AWS','공동 책임','서드파티'],ans:1,ex:'Lambda는 서버리스로 AWS가 런타임 환경까지 관리합니다. 고객은 코드 로직만 책임집니다.'},
+  {d:'2',q:'새로 입사한 직원에게 S3 읽기 권한만 부여하려 합니다. 모범 사례에 따른 올바른 방법은?',opts:['루트 계정 공유','S3 전체 권한 정책 부여','최소 권한 IAM 정책 생성 후 부여','Admin 그룹 추가'],ans:2,ex:'최소 권한 원칙에 따라 필요한 권한만 담은 IAM 정책을 생성해 부여합니다.'},
+  {d:'2',q:'AWS 계정의 루트 사용자 보안을 강화하기 위해 가장 먼저 해야 할 일은?',opts:['루트로 일상 업무 수행','MFA 활성화','모든 서비스에 풀 권한 부여','루트 액세스 키 생성'],ans:1,ex:'루트 사용자에게 MFA를 활성화하고 일상 업무에는 IAM 사용자를 쓰는 것이 모범 사례입니다.'},
+  {d:'2',q:'EC2 인스턴스가 S3 버킷에 접근해야 합니다. 가장 안전한 방법은?',opts:['EC2에 액세스 키 하드코딩','IAM 역할을 EC2에 연결','루트 계정 자격 증명 사용','모든 S3 버킷을 퍼블릭으로 설정'],ans:1,ex:'IAM 역할을 EC2에 연결하면 임시 자격 증명을 자동 관리합니다. 액세스 키 하드코딩은 보안 위험입니다.'},
+  {d:'2',q:'API 키와 DB 비밀번호를 안전하게 저장하고 자동으로 교체하려면?',opts:['EC2 환경 변수에 저장','AWS Secrets Manager','S3 버킷에 텍스트로 저장','IAM 정책에 포함'],ans:1,ex:'Secrets Manager는 민감 정보를 암호화 저장하고 자동 교체 기능을 제공합니다.'},
+  {d:'2',q:'AWS 계정에서 누가 언제 어떤 API를 호출했는지 감사 로그를 확인하려면?',opts:['Amazon CloudWatch','AWS CloudTrail','AWS Config','Amazon Inspector'],ans:1,ex:'CloudTrail은 모든 API 호출을 기록하는 감사 로그 서비스입니다.'},
+  {d:'2',q:'EC2 CPU 사용률이 80%를 초과하면 자동으로 알림을 보내려면?',opts:['AWS CloudTrail','Amazon CloudWatch','AWS Config','AWS Trusted Advisor'],ans:1,ex:'CloudWatch는 메트릭 모니터링과 알람 설정 서비스입니다.'},
+  {d:'2',q:'웹 애플리케이션이 DDoS 공격을 받고 있습니다. 기본적으로 자동 방어하는 서비스는?',opts:['AWS WAF','AWS Shield Standard','Amazon GuardDuty','AWS Firewall Manager'],ans:1,ex:'Shield Standard는 모든 AWS 고객에게 무료로 제공되며 일반적인 DDoS를 자동 방어합니다.'},
+  {d:'2',q:'웹사이트에 SQL 인젝션, XSS 공격이 들어오고 있습니다. 차단하려면?',opts:['AWS Shield','AWS WAF','Amazon GuardDuty','Amazon Inspector'],ans:1,ex:'WAF(Web Application Firewall)는 SQL 인젝션, XSS 등 웹 공격을 차단합니다.'},
+  {d:'2',q:'AWS 계정에서 비정상적인 API 호출 패턴과 악의적인 IP 접근이 의심됩니다. 자동 탐지 서비스는?',opts:['Amazon Inspector','AWS Security Hub','Amazon GuardDuty','AWS Config'],ans:2,ex:'GuardDuty는 위협 인텔리전스를 활용해 AWS 계정 내 이상 활동을 자동 탐지합니다.'},
+  {d:'2',q:'EC2 인스턴스에 알려진 CVE 취약점이 있는지 자동으로 스캔하려면?',opts:['Amazon GuardDuty','Amazon Inspector','AWS Trusted Advisor','AWS Security Hub'],ans:1,ex:'Inspector는 EC2와 컨테이너 이미지의 소프트웨어 취약점을 자동 스캔합니다.'},
+  {d:'2',q:'GuardDuty, Inspector, Macie 등 여러 보안 서비스 결과를 한 곳에서 통합 확인하려면?',opts:['AWS CloudTrail','Amazon CloudWatch','AWS Security Hub','AWS Config'],ans:2,ex:'Security Hub는 여러 보안 서비스 결과를 중앙 대시보드에서 통합 조회합니다.'},
+  {d:'2',q:'S3 버킷에 주민번호, 신용카드 번호가 저장되어 있는지 자동으로 탐지하려면?',opts:['Amazon GuardDuty','Amazon Inspector','Amazon Macie','AWS Config'],ans:2,ex:'Macie는 S3에서 PII(개인식별정보)를 ML로 자동 탐지합니다.'},
+  {d:'2',q:'HTTPS로 데이터를 전송할 때 적용되는 암호화 방식은?',opts:['저장 시 암호화','전송 중 암호화','키 관리 암호화','애플리케이션 암호화'],ans:1,ex:'전송 중 암호화(In-transit)는 데이터가 이동할 때 적용됩니다. HTTPS/TLS가 대표적입니다.'},
+  {d:'2',q:'ISO 27001, SOC 2 같은 AWS 규정 준수 보고서를 다운로드하려면?',opts:['AWS Config','AWS Trusted Advisor','AWS Artifact','AWS Security Hub'],ans:2,ex:'Artifact는 AWS의 규정 준수 문서, 보고서를 다운로드할 수 있는 포털입니다.'},
+  {d:'2',q:'새 IAM 사용자를 생성하면 기본적으로 부여된 권한은?',opts:['관리자 권한','S3 읽기 권한','권한 없음','루트와 동일한 권한'],ans:2,ex:'최소 권한 원칙에 따라 새 IAM 사용자는 기본적으로 아무 권한도 없습니다.'},
+  {d:'2',q:'여러 AWS 계정에 SSO(Single Sign-On)로 한 번에 로그인하게 하려면?',opts:['IAM 루트 계정 공유','AWS IAM Identity Center','Amazon Cognito','AWS Directory Service'],ans:1,ex:'IAM Identity Center(구 SSO)는 여러 계정에 통합 로그인을 제공합니다.'},
+  {d:'2',q:'리소스 설정이 변경될 때마다 이력을 추적하고 규정 준수 여부를 확인하려면?',opts:['AWS CloudTrail','Amazon CloudWatch','AWS Config','AWS Trusted Advisor'],ans:2,ex:'Config는 리소스 설정 변경 이력을 추적하고 규정 준수 규칙 적용을 지원합니다.'},
+  {d:'2',q:'루트 사용자만 수행할 수 있는 작업의 예로 올바른 것은?',opts:['EC2 인스턴스 시작','S3 버킷 생성','AWS 계정 결제 정보 변경','IAM 사용자 생성'],ans:2,ex:'AWS 계정 해지, 결제 정보 변경, Support 플랜 변경 등은 루트 사용자만 수행할 수 있습니다.'},
+  {d:'1',q:'기업이 온프레미스 서버를 유지하는 비용과 비교해 클라우드의 핵심 경제적 이점은?',opts:['더 빠른 서버 성능 제공','고정비를 가변비로 전환','무제한 스토리지 제공','IT 인력 불필요'],ans:1,ex:'클라우드는 서버 구매(CapEx) 대신 사용한 만큼만 지불하는 OpEx 모델로 전환합니다.'},
+  {d:'1',q:'"다중 AZ 배포로 장애 발생 시 자동 복구"는 Well-Architected Framework의 어느 기둥에 해당합니까?',opts:['운영 우수성','보안','신뢰성','비용 최적화'],ans:2,ex:'신뢰성(Reliability) 기둥은 장애에서 자동 복구하고 수요에 맞게 확장하는 능력을 다룹니다.'},
+  {d:'1',q:'"IAM을 통한 최소 권한 적용, 데이터 암호화"는 어느 Well-Architected 기둥입니까?',opts:['운영 우수성','보안','성능 효율성','지속 가능성'],ans:1,ex:'보안(Security) 기둥은 모든 레이어에서 보안 적용, IAM, 암호화를 포함합니다.'},
+  {d:'1',q:'"예약 인스턴스와 스팟 인스턴스 활용으로 클라우드 비용 절감"은 어느 기둥입니까?',opts:['신뢰성','성능 효율성','비용 최적화','지속 가능성'],ans:2,ex:'비용 최적화 기둥은 불필요한 지출을 없애고 적합한 구매 옵션을 선택하는 것을 다룹니다.'},
+  {d:'1',q:'"CloudFormation 템플릿으로 모든 인프라 배포를 코드로 자동화"는 어느 기둥입니까?',opts:['신뢰성','운영 우수성','성능 효율성','보안'],ans:1,ex:'운영 우수성(Operational Excellence)은 자동화와 지속적 운영 개선을 다룹니다.'},
+  {d:'1',q:'"서버리스 도입으로 유휴 리소스를 줄여 에너지 소비 감소"는 어느 기둥입니까?',opts:['비용 최적화','성능 효율성','지속 가능성','신뢰성'],ans:2,ex:'지속 가능성(Sustainability) 기둥은 클라우드 워크로드의 환경 영향 최소화를 다룹니다.'},
+  {d:'1',q:'기업이 클라우드 도입을 준비할 때 비즈니스·인력·거버넌스·플랫폼·보안·운영 6개 관점으로 분석하는 프레임워크는?',opts:['AWS Well-Architected Framework','AWS CAF','AWS Migration Hub','AWS Control Tower'],ans:1,ex:'CAF(Cloud Adoption Framework)는 클라우드 도입을 6개 관점으로 체계화한 프레임워크입니다.'},
+  {d:'1',q:'기존 서버를 코드·아키텍처 변경 없이 그대로 AWS로 이전하는 전략은?',opts:['Replatform','Refactor','Rehost','Repurchase'],ans:2,ex:'Rehost(Lift and Shift)는 변경 없이 그대로 이전하는 가장 빠른 마이그레이션 전략입니다.'},
+  {d:'1',q:'CRM 소프트웨어를 자체 서버에서 Salesforce SaaS로 전환하는 마이그레이션 전략은?',opts:['Rehost','Replatform','Refactor','Repurchase'],ans:3,ex:'Repurchase는 기존 앱을 SaaS 솔루션으로 교체하는 전략입니다.'},
+  {d:'1',q:'모놀리식 앱을 마이크로서비스로 분해하고 서버리스 아키텍처로 완전히 재설계하는 전략은?',opts:['Rehost','Replatform','Refactor','Retain'],ans:2,ex:'Refactor(Re-architect)는 클라우드 네이티브로 완전히 재설계하는 전략으로 노력이 가장 많이 듭니다.'},
+  {d:'1',q:'AWS가 대규모로 인프라를 운영하기 때문에 개별 고객보다 단가가 낮아지는 효과는?',opts:['고가용성','민첩성','규모의 경제','탄력성'],ans:2,ex:'규모의 경제(Economies of Scale)로 AWS는 대규모 운영 비용을 고객에게 낮은 가격으로 전달합니다.'},
+  {d:'1',q:'클라우드에서는 사전에 서버 용량을 정확히 예측하지 않아도 됩니다. 이 이점은?',opts:['데이터센터 비용 절감','용량 추정 불필요','글로벌 도달 범위','고가용성'],ans:1,ex:'클라우드는 필요할 때 즉시 확장·축소 가능해 사전 용량 계획이 불필요합니다.'},
+  {d:'1',q:'스타트업이 글로벌 서비스를 시작하기 위해 몇 분 만에 전 세계 리전에 배포할 수 있는 AWS 특성은?',opts:['고가용성','탄력성','글로벌 도달 범위','규모의 경제'],ans:2,ex:'AWS의 글로벌 인프라를 통해 전 세계 리전에 빠르게 배포할 수 있습니다.'},
+  {d:'1',q:'특정 국가 규정상 고객 데이터가 해당 국가 밖으로 나가면 안 됩니다. 이 요구사항을 무엇이라 합니까?',opts:['고가용성','데이터 주권','탄력성','재해 복구'],ans:1,ex:'데이터 주권(Data Sovereignty)은 데이터가 특정 지역 안에 머물러야 하는 법적 요구사항입니다.'},
+  {d:'1',q:'AWS CAF에서 HR팀과 조직 변화 관리를 담당하는 관점은?',opts:['비즈니스','인력','거버넌스','운영'],ans:1,ex:'인력(People) 관점은 HR, 조직 구조, 변화 관리, 클라우드 교육을 담당합니다.'},
+  {d:'1',q:'"서버를 미리 구매하지 않아도 된다"는 클라우드의 이점을 경제학 용어로 표현하면?',opts:['OpEx에서 CapEx로 전환','CapEx에서 OpEx로 전환','규모의 경제 손실','고정비 증가'],ans:1,ex:'클라우드는 자본 지출(CapEx, 서버 구매)을 운영 지출(OpEx, 사용한 만큼 지불)로 전환합니다.'},
+  {d:'1',q:'실제 사용량보다 큰 인스턴스를 쓰고 있어 비용이 낭비됩니다. 이를 해결하는 Well-Architected 개념은?',opts:['Auto Scaling','Right Sizing','예약 인스턴스','Spot 인스턴스'],ans:1,ex:'Right Sizing(적정 규모 조정)은 실제 사용량에 맞게 인스턴스 크기를 최적화해 비용을 줄입니다.'},
+  {d:'1',q:'"갑자기 서비스 아이디어가 떠올라 몇 시간 만에 테스트 환경을 구축했다"는 어떤 클라우드 이점입니까?',opts:['탄력성','고가용성','민첩성','규모의 경제'],ans:2,ex:'민첩성(Agility)은 빠르게 실험하고 배포할 수 있는 클라우드의 핵심 이점입니다.'},
+  {d:'1',q:'Well-Architected Framework에서 기둥 수는 총 몇 개입니까?',opts:['4개','5개','6개','7개'],ans:2,ex:'Well-Architected Framework는 운영 우수성·보안·신뢰성·성능 효율성·비용 최적화·지속 가능성 6개 기둥으로 구성됩니다.'},
+  {d:'1',q:'AWS CAF의 관점 수는 총 몇 개입니까?',opts:['4개','5개','6개','8개'],ans:2,ex:'AWS CAF는 비즈니스·인력·거버넌스·플랫폼·보안·운영 6개 관점으로 구성됩니다.'},
+  {d:'3',q:'고성능 컴퓨팅이 필요하고 대규모 I/O 처리가 중요한 빅데이터 워크로드에 적합한 EC2 유형은?',opts:['컴퓨팅 최적화(C)','메모리 최적화(R)','스토리지 최적화(I)','범용(M)'],ans:2,ex:'스토리지 최적화(I 시리즈)는 대용량 로컬 스토리지와 높은 I/O가 필요한 워크로드에 적합합니다.'},
+  {d:'3',q:'AWS에서 NoSQL 데이터베이스가 필요하고 밀리초 응답과 무제한 확장이 요구됩니다.',opts:['Amazon RDS','Amazon Aurora','Amazon DynamoDB','Amazon ElastiCache'],ans:2,ex:'DynamoDB는 키-값 NoSQL로 밀리초 응답과 수평 확장을 제공합니다.'},
+  {d:'2',q:'보안 모범 사례 점검, 비용 최적화, 성능 개선 권장 사항을 제공하는 서비스는?',opts:['AWS Config','Amazon Inspector','AWS Trusted Advisor','AWS Security Hub'],ans:2,ex:'Trusted Advisor는 보안·비용·성능·내결함성·서비스 한도를 자동 점검하고 권고합니다.'},
+  {d:'2',q:'고객 애플리케이션의 사용자 가입·로그인·소셜 인증을 구현하려면?',opts:['AWS IAM','Amazon Cognito','AWS Directory Service','AWS SSO'],ans:1,ex:'Cognito는 모바일·웹 앱의 사용자 인증, 소셜 로그인, 사용자 풀 관리를 제공합니다.'},
+  {d:'1',q:'"특정 앱이 레거시 시스템에 종속되어 있어 당분간 이전하지 않기로 결정"하는 전략은?',opts:['Retire','Retain','Rehost','Repurchase'],ans:1,ex:'Retain은 이전 준비가 안 된 앱을 현재 환경에 유지하는 전략입니다.'},
+  {d:'1',q:'"이 앱은 더 이상 사용하지 않으므로 클라우드 이전 없이 폐기"하는 전략은?',opts:['Retain','Repurchase','Retire','Replatform'],ans:2,ex:'Retire는 불필요한 앱을 폐기하는 전략으로 이전 대상에서 제외됩니다.'},
+  {d:'3',q:'Amazon S3, EC2, RDS 등 다양한 서비스의 백업을 하나의 서비스에서 중앙 관리하려면?',opts:['Amazon S3 수명 주기','AWS Backup','AWS DataSync','AWS Storage Gateway'],ans:1,ex:'AWS Backup은 여러 AWS 서비스의 백업을 중앙에서 자동화하고 관리합니다.'},
+  {d:'3',q:'애플리케이션에서 메시지를 보내면 여러 구독자(SQS, Lambda, 이메일)에게 동시에 전달하는 서비스는?',opts:['Amazon SQS','Amazon SNS','Amazon EventBridge','Amazon Kinesis'],ans:1,ex:'SNS(Simple Notification Service)는 pub/sub 방식으로 여러 구독자에게 메시지를 동시 전달합니다.'},
+  {d:'3',q:'마이크로서비스 간 메시지를 큐에 저장해 처리 속도 차이를 완충하는 서비스는?',opts:['Amazon SNS','Amazon SQS','Amazon Kinesis','AWS Step Functions'],ans:1,ex:'SQS(Simple Queue Service)는 메시지 큐 서비스로 시스템 간 디커플링을 제공합니다.'},
+];
+
+let domain='all', idx=0, checked={}, wrong=new Set();
+
+function getFiltered(){
+  if(domain==='wrong') return [...wrong].map(i=>({...Q[i],orig:i}));
+  if(domain==='all') return Q.map((q,i)=>({...q,orig:i}));
+  return Q.map((q,i)=>({...q,orig:i})).filter(q=>q.d===domain);
+}
+
+let filtered=getFiltered();
+
+function setDomain(d){
+  domain=d;
+  document.querySelectorAll('.dbtn').forEach((b,i)=>{b.classList.toggle('active',['all','3','2','1','wrong'][i]===d);});
+  filtered=getFiltered(); idx=0; checked={};
+  updateScore(); render();
+}
+
+function resetQuiz(){
+  checked={}; wrong=new Set(); idx=0;
+  filtered=getFiltered(); updateScore(); render();
+}
+
+function selectOpt(qi, oi){
+  if(checked[qi]!==undefined) return;
+  const q=filtered[qi];
+  const correct=oi===q.ans;
+  checked[qi]=correct;
+  if(!correct) wrong.add(q.orig); else wrong.delete(q.orig);
+  updateScore(); render();
+}
+
+function updateScore(){
+  const total=filtered.length;
+  const done=Object.keys(checked).length;
+  const c=Object.values(checked).filter(v=>v).length;
+  const w=Object.values(checked).filter(v=>!v).length;
+  document.getElementById('sc-c').textContent=c;
+  document.getElementById('sc-w').textContent=w;
+  document.getElementById('sc-rem').textContent=total-done;
+  document.getElementById('sc-rate').textContent=done>0?Math.round(c/done*100)+'%':'0%';
+  document.getElementById('prog-fill').style.width=(total>0?done/total*100:0)+'%';
+  document.getElementById('prog-txt').textContent=done+'/'+total;
+  const r=done>0?Math.floor(done/total)+1:1;
+  document.getElementById('round-badge').textContent=r+'회독 중 (총 '+total+'문제)';
+}
+
+function movePrev(){ if(idx>0){idx--;render();} }
+function moveNext(){ if(idx<filtered.length-1){idx++;render();} }
+
+function render(){
+  filtered=getFiltered();
+  if(idx>=filtered.length) idx=Math.max(0,filtered.length-1);
+  const area=document.getElementById('q-area');
+  if(filtered.length===0){area.innerHTML='<div class="empty">해당 문제가 없습니다.</div>';return;}
+  const q=filtered[idx];
+  const tc=q.d==='3'?'t3':q.d==='2'?'t2':'t1';
+  const isCk=checked[idx]!==undefined;
+  const isOk=checked[idx]===true;
+
+  let opts='';
+  q.opts.forEach((o,i)=>{
+    let cls='opt';
+    if(isCk){
+      if(i===q.ans) cls+=' correct';
+      else if(i===checked[idx]&&!isOk) cls+=' wrong';
+    }
+    const label=['A','B','C','D'][i];
+    opts+=`<button class="${cls}" onclick="selectOpt(${idx},${i})">${label}. ${o}</button>`;
+  });
+
+  let exHtml='';
+  if(isCk){
+    exHtml=`<div class="explanation ${isOk?'ex-ok':'ex-ng'}">
+      ${isOk?'✓ 정답!':'✗ 오답'}<br>${q.ex}
+    </div>
+    <div class="btn-row" style="margin-top:10px;">
+      <button class="opt" style="text-align:center;color:#1a8a5e;font-weight:600;" onclick="moveNext()">다음 문제 →</button>
+    </div>`;
+  }
+
+  area.innerHTML=`<div class="q-card">
+    <span class="dtag ${tc}">도메인 ${q.d}</span>
+    <div class="qnum">${idx+1} / ${filtered.length}</div>
+    <div class="qtext">${q.q}</div>
+    ${opts}${exHtml}
+  </div>`;
+
+  document.getElementById('btn-prev').disabled=idx===0;
+  document.getElementById('btn-next').disabled=idx===filtered.length-1;
+}
+
+updateScore(); render();
+</script>
+</body>
+</html>

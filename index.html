@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AWS CLF-C02 학습 앱</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:#232f3e;padding:20px 16px 16px;text-align:center;}
+.topbar .badge{display:inline-block;background:#ff9900;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:10px;letter-spacing:.5px;}
+.topbar h1{color:#fff;font-size:20px;font-weight:700;line-height:1.4;}
+.topbar p{color:#aab7c4;font-size:13px;margin-top:6px;}
+.domain-bar{background:#1a2535;padding:12px 16px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+.dtag{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;}
+.t3{background:#1a3a5c;color:#7ec8e3;}
+.t2{background:#3a2510;color:#f5a623;}
+.t1{background:#1a3a1a;color:#7ec87e;}
+.content{flex:1;padding:20px 16px 40px;}
+.section-title{font-size:13px;font-weight:600;color:#888;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;}
+.card{background:#fff;border-radius:16px;border:1px solid #e8e8e0;margin-bottom:14px;overflow:hidden;text-decoration:none;display:block;color:#1a1a1a;}
+.card:active{transform:scale(.98);}
+.card-header{padding:18px 18px 14px;border-bottom:1px solid #f0f0ec;}
+.card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+.icon-blank{background:#e8f4fd;}
+.icon-quiz{background:#fff3e0;}
+.card-title{font-size:17px;font-weight:700;margin-bottom:4px;}
+.card-desc{font-size:13px;color:#666;line-height:1.5;}
+.card-footer{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;background:#fafaf8;}
+.card-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.meta-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;background:#f0f0ec;color:#555;}
+.card-arrow{font-size:18px;color:#aaa;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.stat{background:#fff;border-radius:12px;border:1px solid #e8e8e0;padding:14px;text-align:center;}
+.stat .n{font-size:22px;font-weight:700;color:#232f3e;}
+.stat .l{font-size:11px;color:#888;margin-top:2px;}
+.tip{background:#fffbf0;border:1px solid #ffe0a0;border-radius:12px;padding:14px 16px;margin-bottom:20px;}
+.tip-title{font-size:12px;font-weight:700;color:#b8860b;margin-bottom:6px;}
+.tip-text{font-size:13px;color:#555;line-height:1.6;}
+.footer{text-align:center;padding:16px;font-size:11px;color:#aaa;border-top:1px solid #e8e8e0;background:#fff;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="badge">비공식 학습 도구 · Unofficial</div>
+  <h1>AWS CLF-C02<br>학습 앱</h1>
+  <p>빈칸채우기 + 시나리오 객관식으로 합격까지</p>
+</div>
+
+<div class="domain-bar">
+  <span class="dtag t3">도메인 3 · 기술 34%</span>
+  <span class="dtag t2">도메인 2 · 보안 30%</span>
+  <span class="dtag t1">도메인 1 · 개념 24%</span>
+</div>
+
+<div class="content">
+
+  <div class="stats-row">
+    <div class="stat"><div class="n">280</div><div class="l">총 문제 수</div></div>
+    <div class="stat"><div class="n">700</div><div class="l">합격 점수</div></div>
+    <div class="stat"><div class="n">65</div><div class="l">시험 문항</div></div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-title">📌 권장 학습 순서</div>
+    <div class="tip-text">도메인 3 빈칸 → 도메인 3 객관식 → 도메인 2 → 도메인 1 → 오답 반복<br>정답률 80% 이상이 꾸준히 나오면 시험 등록!</div>
+  </div>
+
+  <div class="section-title">학습 모드 선택</div>
+
+  <a class="card" href="clf_blank.html">
+    <div class="card-header">
+      <div class="card-icon icon-blank">📝</div>
+      <div class="card-title">빈칸채우기</div>
+      <div class="card-desc">서비스명과 핵심 개념을 직접 입력하며 암기합니다. 한국어·영어 정답 모두 인정됩니다.</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-meta">
+        <span class="meta-tag">200문제</span>
+        <span class="meta-tag">한/영 정답 인정</span>
+        <span class="meta-tag">오답 필터</span>
+      </div>
+      <span class="card-arrow">›</span>
+    </div>
+  </a>
+
+  <a class="card" href="clf_quiz.html">
+    <div class="card-header">
+      <div class="card-icon icon-quiz">🎯</div>
+      <div class="card-title">시나리오 객관식</div>
+      <div class="card-desc">실제 시험처럼 상황을 주고 4개 보기 중 선택합니다. 실전 감각을 키웁니다.</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-meta">
+        <span class="meta-tag">80문제</span>
+        <span class="meta-tag">4지선다</span>
+        <span class="meta-tag">해설 포함</span>
+      </div>
+      <span class="card-arrow">›</span>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">
+  비공식 학습 도구 · Not affiliated with AWS<br>
+  AWS and related marks are trademarks of Amazon.com, Inc.
+</div>
+
+</body>
+</html>
