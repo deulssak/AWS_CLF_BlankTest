@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AWS CLF 빈칸채우기</title>
+<title>AWS CLF ブランクテスト</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;}
@@ -61,26 +61,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <div class="score-row">
-  <div class="scard"><div class="n c" id="sc-c">0</div><div class="l">정답</div></div>
-  <div class="scard"><div class="n w" id="sc-w">0</div><div class="l">오답</div></div>
-  <div class="scard"><div class="n" id="sc-rem">0</div><div class="l">남음</div></div>
-  <div class="scard"><div class="n r" id="sc-rate">0%</div><div class="l">정답률</div></div>
+  <div class="scard"><div class="n c" id="sc-c">0</div><div class="l">正解</div></div>
+  <div class="scard"><div class="n w" id="sc-w">0</div><div class="l">誤解</div></div>
+  <div class="scard"><div class="n" id="sc-rem">0</div><div class="l">残り</div></div>
+  <div class="scard"><div class="n r" id="sc-rate">0%</div><div class="l">正解率</div></div>
 </div>
 
 <div class="domain-row">
-  <button class="dbtn active" onclick="setDomain('all')">전체</button>
-  <button class="dbtn" onclick="setDomain('3')">도메인3</button>
-  <button class="dbtn" onclick="setDomain('2')">도메인2</button>
-  <button class="dbtn" onclick="setDomain('1')">도메인1</button>
-  <button class="dbtn" onclick="setDomain('wrong')">오답만</button>
+  <button class="dbtn active" onclick="setDomain('all')">全体</button>
+  <button class="dbtn" onclick="setDomain('3')">ドメイン3</button>
+  <button class="dbtn" onclick="setDomain('2')">ドメイン2</button>
+  <button class="dbtn" onclick="setDomain('1')">ドメイン1</button>
+  <button class="dbtn" onclick="setDomain('wrong')">誤解のみ</button>
 </div>
 
 <div style="background:#fff;padding:10px 16px 4px;">
   <div class="mode-row">
-    <button class="mbtn active" onclick="setMode('fill')">빈칸채우기</button>
-    <button class="mbtn" onclick="setMode('review')">정답 복습</button>
+    <button class="mbtn active" onclick="setMode('fill')">ブランクテスト</button>
+    <button class="mbtn" onclick="setMode('review')">正解復習</button>
   </div>
-  <div class="round-badge" id="round-badge">1회독 중</div>
+  <div class="round-badge" id="round-badge">1解読中</div>
 </div>
 
 <div class="prog-wrap" style="background:#fff;padding:8px 16px 12px;">
@@ -91,9 +91,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="q-wrap" id="q-area"></div>
 
 <div class="nav-row">
-  <button class="nav-btn" id="btn-prev" onclick="movePrev()" disabled>이전</button>
-  <button class="nav-btn active-nav" onclick="resetQuiz()">처음부터</button>
-  <button class="nav-btn" id="btn-next" onclick="moveNext()" disabled>다음</button>
+  <button class="nav-btn" id="btn-prev" onclick="movePrev()" disabled>戻る</button>
+  <button class="nav-btn active-nav" onclick="resetQuiz()">最初から</button>
+  <button class="nav-btn" id="btn-next" onclick="moveNext()" disabled>次へ</button>
 </div>
 
 <script>
